@@ -1,0 +1,19 @@
+# Docker ignore rules for HCM Lite Backend
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pem
+*.key
+*.log
+.git/
+.gitignore
+.pytest_cache/
+.coverage
+htmlcov/
+seed_data.json
+.env
+.env.local
+.env.production

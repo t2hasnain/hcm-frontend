@@ -45,6 +45,32 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 ---
 
+## 🐳 Running with Docker & Docker Compose (Recommended)
+You can launch the entire backend and PostgreSQL database using Docker without needing Python or PostgreSQL installed locally:
+
+### 1. Start All Services (FastAPI + PostgreSQL)
+```bash
+docker compose up -d --build
+```
+
+### 2. Verify Container Health
+```bash
+docker compose ps
+```
+
+* **FastAPI Backend**: `http://localhost:8000`
+* **Swagger Documentation**: `http://localhost:8000/docs`
+* **Health Check**: `http://localhost:8000/api/v1/auth/status`
+
+### 3. Stop Services
+```bash
+docker compose down
+# Or to clear data volume:
+docker compose down -v
+```
+
+---
+
 ## 🧪 Automated Testing & Security Audit
 Run the comprehensive 29-point QA and Cybersecurity audit suite:
 ```bash

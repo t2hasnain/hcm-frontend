@@ -1,0 +1,60 @@
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Database Service
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: hcm_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-1111}
+      POSTGRES_DB: HCM
+    ports:
+      - "5432:5432"
+    volumes:
+      - hcm_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d HCM"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hcm_network
+
+  # ---------------------------------------------------------------------------
+  # HCM Lite FastAPI Application Service
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hcm_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:${DB_PASSWORD:-1111}@db:5432/HCM
+      - SECRET_KEY=${SECRET_KEY:-hcm_super_secure_random_production_secret_key_2026}
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=1440
+      - CORS_ORIGINS=["http://localhost:3000","http://localhost:3001","https://hcm-frontend-dusky.vercel.app"]
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY:-""}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT:-""}
+      - AZURE_OPENAI_DEPLOYMENT_NAME=${AZURE_OPENAI_DEPLOYMENT_NAME:-"gpt-5.4-mini"}
+      - AZURE_COMMUNICATION_CONNECTION_STRING=${AZURE_COMMUNICATION_CONNECTION_STRING:-""}
+      - AZURE_EMAIL_SENDER=${AZURE_EMAIL_SENDER:-"noreply@uirefine.app"}
+      - IMGBB_API_KEY=${IMGBB_API_KEY:-"ff5602c6948eed55e522fbb11947eb95"}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - hcm_network
+
+volumes:
+  hcm_pgdata:
+    driver: local
+
+networks:
+  hcm_network:
+    driver: bridge
