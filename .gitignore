@@ -10,6 +10,17 @@
 !.yarn/releases
 !.yarn/versions
 
+# Python & Backend
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.tar.gz
+.pytest_cache/
+seed_data.json
+
 # testing
 /coverage
 
@@ -20,9 +31,10 @@
 # production
 /build
 
-# misc
-.DS_Store
+# security & credentials
 *.pem
+*.key
+.DS_Store
 
 # debug
 npm-debug.log*
@@ -30,8 +42,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# environment variables (ignore all real env files, preserve template)
+.env
+.env*.local
+.env.production
+.env.development
+!.env.example
 
 # vercel
 .vercel
